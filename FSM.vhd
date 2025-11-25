@@ -22,7 +22,7 @@ architecture rtl_fsm of fsm_jogo is
 begin
     process(clk, reset)
     begin
-        if reset = '1' then
+        if reset = '0' then
             estado <= INICIO;
         elsif rising_edge(clk) then
             estado <= prox_estado;
@@ -42,7 +42,7 @@ begin
                 prox_estado <= T0;   -- Vai para estado de espera pela tentativa
 
             when T0 => -- Espera pela tentativa (ENTER)
-                if enter = '1' then
+                if enter = '0' then
                     loadB <= '1';     -- Carrega o valor de SW nos Registradores B
                     prox_estado <= C1;
                 end if;
@@ -53,14 +53,15 @@ begin
 
            when C2 =>
                 display_en <= '1';
-                if enter = '1' then   
+                if enter = '0' then   
                     prox_estado <= T1;
                 end if;
 
             when T1 =>
-                if enter = '1' then
+                if enter = '0' then
                     prox_estado <= T0;
                 end if;
         end case;
     end process;
+
 end architecture;
