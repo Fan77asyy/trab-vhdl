@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
--- COMPONENTE: EDGE DETECTOR (detecta borda de DESCIDA)
+-- COMPONENTE: EDGE DETECTOR (detecta borda de DESCIDA - mudou p borde de subida)
 
 entity edge_detector is
     port(
@@ -41,3 +41,4 @@ begin
 
   --  pulse_out <= '1' when (prev = '1' and signal_in = '0') else '0';
 end architecture;
+
