@@ -8,11 +8,11 @@ entity fsm_jogo is
         clk        : in std_logic;
         reset      : in std_logic;  -- pulso (edge detect) - ATIVO EM LOW
         enter      : in std_logic;  -- pulso (edge detect) - ATIVO EM LOW
-        timeout    : in std_logic;  -- timer que pode tirar
+          
 
         loadA      : out std_logic; -- Sorteio (usado para garantir o carregamento inicial)
-        loadB      : out std_logic; -- Carrega a tentativa do usuÃ¡rio (B)
-        display_en : out std_logic; -- Habilita o display de resultados
+        loadB      : out std_logic; 
+        display_en : out std_logic; 
         reset_display : out std_logic -- Sinal para acionar displays no reset
     );
 end entity;
@@ -21,7 +21,7 @@ architecture rtl_fsm of fsm_jogo is
     type estado_t is (INICIO1,INICIO2, T0, C1, C2, T1);
     signal estado, prox_estado : estado_t := INICIO1;
     
-    -- Sinais para tratar botÃµes ativos em LOW
+    -- Sinais para tratar botoes ativos em LOW
     signal reset_active, enter_active : std_logic;
 begin
 
@@ -38,7 +38,7 @@ begin
         end if;
     end process;
 
-    process(estado, enter_active, timeout, reset_active)
+    process(estado, enter_active, reset_active)
     begin
         loadA <= '0';
         loadB <= '0';
@@ -48,7 +48,7 @@ begin
 
         case estado is
             when INICIO1 =>
-                loadA <= '1';       -- ForÃ§a o carregamento/sorteio inicial
+                loadA <= '1';       -- Forca o carregamento/sorteio inicial
                 reset_display <= '1'; -- Aciona todos os displays como aviso
                 prox_estado <= INICIO2;   -- Vai para estado de espera pela tentativa
                 
@@ -63,9 +63,9 @@ begin
                     prox_estado <= C1;
                 end if;
 
-            when C1 => -- TransiÃ§Ã£o apÃ³s carregar a tentativa
+            when C1 => -- 
                 loadB <= '0'; 
-                display_en <= '1';   -- Habilita o display e o timer
+                display_en <= '1';   -- Habilita o display 
                 prox_estado <= C2;
                 
             when C2 =>
@@ -80,7 +80,7 @@ begin
                 end if;
         end case;
         
-        -- Reset assÃ­ncrono: sempre que reset estiver ativo, aciona displays
+        -- Assync reset, ativa displays
         if reset_active = '1' then
             reset_display <= '1';
         end if;
