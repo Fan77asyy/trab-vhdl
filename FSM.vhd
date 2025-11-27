@@ -25,10 +25,6 @@ architecture rtl_fsm of fsm_jogo is
     signal reset_active, enter_active : std_logic;
 begin
 
-    -- InversÃ£o dos sinais: convertemos de ativo-LOW para ativo-HIGH
-    --reset_active <=  reset;  -- not reset=0 (pressionado) -> reset_active=1
-    --enter_active <=  enter;  -- not enter=0 (pressionado) -> enter_active=1
-
     process(clk, reset_active)
     begin
         if reset_active = '1' then
