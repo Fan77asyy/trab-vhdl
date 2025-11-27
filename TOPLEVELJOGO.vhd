@@ -1,7 +1,8 @@
+--Alexandre Duarte, Gulherme Prado e Júlia Magalhães
 library ieee;
 use ieee.std_logic_1164.all;
 
--- TOP LEVEL â€” jogo_adivinhacao para placa DE10-Lite
+-- TP LEVEL DO JOGO (conexão com a placa)
 entity jogo_adivinhacao is
     port 
     (	
@@ -94,7 +95,7 @@ architecture top_refactored of jogo_adivinhacao is
     signal B_tentativa           : std_logic_vector(8 downto 0);
     signal R_resultados          : std_logic_vector(5 downto 0);
     
-    -- Sinais do Gerador AleatÃ³rio
+    -- Sinais do PRNG
     signal num_aleat1, num_aleat2, num_aleat3 : std_logic_vector(2 downto 0);
     
     -- Sinais para displays
@@ -105,7 +106,7 @@ begin
     -- Mapeamento de entradas
     SW_data <= SW(8 downto 0);
     
-    -- LEDs espelham os switches
+    -- Conexao dos leds com as placas
     LEDR(9 downto 0) <= SW(9 downto 0);
 
     -- 1. Tratamento de Chaves (Debouncer + Edge Detector)
@@ -133,7 +134,7 @@ begin
         pulse_out => ent
     );
 
-    -- 2. MÃ¡quina de Estados (Controle Central)
+    -- 2. FSM
     FSM: fsm_jogo port map(
         clk => MAX10_CLK1_50,
         reset => rst,
@@ -145,7 +146,7 @@ begin
         reset_display => reset_display
     );
 
-    -- 3. Gerador de NÃºmeros AleatÃ³rios
+    -- 3. PRNG
     RAND_GEN: gerador_aleatorio port map(
         CLK => MAX10_CLK1_50,
         RST => rst,
@@ -155,7 +156,7 @@ begin
         NUM3 => num_aleat3
     );
 
-    -- 4. Registradores A (Armazenam o nÃºmero sorteado)
+    -- 4. Registradores A (Armazenam o # sorteado)
     REG_A1: registrador port map(
         clk => MAX10_CLK1_50,
         load => loadA, 
@@ -177,7 +178,7 @@ begin
         dout => A_sorteado(8 downto 6)
     );
 
-    -- 5. Registradores B (Armazenam a tentativa do usuÃ¡rio)
+    -- 5. Registradores B (Armazenam a tentativa do jogador)
     REG_B1: registrador port map(
         clk => MAX10_CLK1_50,
         load => loadB, --ent
@@ -199,14 +200,14 @@ begin
         dout => B_tentativa(8 downto 6)
     );
 
-    -- 6. LÃ³gica de ComparaÃ§Ã£o
+    
     COMPARE: comparador port map(
         A_in => A_sorteado,
         B_in => B_tentativa,
         R_out => R_resultados
     );
 
-    -- 7. Decodificadores de 7 Segmentos
+    -- 6. Decodificadores de 7 Segmentos
     DEC0: decod7seg port map(
         code => R_resultados(1 downto 0),
         hex => hex0_internal
@@ -222,14 +223,15 @@ begin
         hex => hex2_internal
     );
     
-    -- 8. Mapeamento para displays com controle de reset
+    -- 7. Mapeamento para displays com controle de reset
     HEX0 <= '1' & hex0_internal when reset_display = '0' else "11111111";
     HEX1 <= '1' & hex1_internal when reset_display = '0' else "11111111";
     HEX2 <= '1' & hex2_internal when reset_display = '0' else "11111111";
     
-    -- 9. Displays nÃ£o utilizados - acendem todos durante reset
+    -- 8. Displays nÃ£o utilizados - acendem todos durante reset
     HEX3 <= "11111111" when reset_display = '1' else (others => '1');
     HEX4 <= "11111111" when reset_display = '1' else (others => '1');
     HEX5 <= "11111111" when reset_display = '1' else (others => '1');
 
 end architecture;
+
